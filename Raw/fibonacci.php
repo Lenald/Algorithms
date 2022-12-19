@@ -2,15 +2,12 @@
 $a = 0;
 $b = 1;
 
-while (true) {
+echo $a . PHP_EOL . $b . PHP_EOL;
+
+while (!is_infinite($this->a)) {
     $b = $a + $b;
     $a = $b - $a;
 
     //Cast scientific notation (1.3069892237634E+308) into human-readable and remove thousands separator
     echo number_format($b, 0, '.', ' ') . PHP_EOL;
-
-    //iteration 1476 reaches the double memory limit of 8 bytes and the number is being transformed to infinity
-    if (is_infinite($b)) {
-        break;
-    }
 }

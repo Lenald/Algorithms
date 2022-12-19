@@ -18,16 +18,11 @@ class Fibonacci
         $this->print($this->a);
         $this->print($this->b);
 
-        while (true) {
+        while (!is_infinite($this->a)) {
             $this->next();
 
             //Cast scientific notation (1.3069892237634E+308) into human-readable and remove thousands separator
             $this->print(number_format($this->b, 0, '.', ' '));
-
-            //iteration 1476 reaches the double memory limit of 8 bytes and the number is being transformed to infinity
-            if (is_infinite($this->b)) {
-                break;
-            }
         }
     }
 
