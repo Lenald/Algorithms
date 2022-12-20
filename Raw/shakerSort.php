@@ -29,7 +29,7 @@ do {
         $l > $offsetL;
         $l--, $r--
     ) {
-        if ($arr[$r] > $arr[$l]) {
+        if ($arr[$r] < $arr[$l]) {
             $sorted = false;
             ArrayTools::swap($arr, $l, $r);
         }
