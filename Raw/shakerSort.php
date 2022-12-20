@@ -4,13 +4,6 @@ require '../vendor/autoload.php';
 
 use Adorosh\Algorithms\Utils\ArrayTools;
 
-function swap(array &$arr, int $l, int $r): void
-{
-    $tmp = $arr[$l];
-    $arr[$l] = $arr[$r];
-    $arr[$r] = $tmp;
-}
-
 $arr = ArrayTools::generateArray();
 ArrayTools::print($arr);
 
@@ -26,7 +19,7 @@ do {
     ) {
         if ($arr[$l] > $arr[$r]) {
             $sorted = false;
-            swap($arr, $l, $r);
+            ArrayTools::swap($arr, $l, $r);
         }
     }
     $offsetR++;
@@ -38,7 +31,7 @@ do {
     ) {
         if ($arr[$r] > $arr[$l]) {
             $sorted = false;
-            swap($arr, $l, $r);
+            ArrayTools::swap($arr, $l, $r);
         }
     }
     $offsetL++;

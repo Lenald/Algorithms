@@ -20,4 +20,11 @@ class ArrayTools
     {
         echo implode($separator, $values) . PHP_EOL;
     }
+
+    public static function swap(array &$arr, int $l, int $r): void
+    {
+        $tmp = $arr[$l];
+        $arr[$l] = $arr[$r];
+        $arr[$r] = $tmp;
+    }
 }

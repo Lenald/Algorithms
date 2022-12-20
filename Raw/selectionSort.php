@@ -17,9 +17,7 @@ for ($lastSorted = 0; $lastSorted < count($arr) - 1; $lastSorted++) {
     }
 
     if ($arr[$lastSorted] > $arr[$minIndex]) {
-        $tmp = $arr[$lastSorted];
-        $arr[$lastSorted] = $arr[$minIndex];
-        $arr[$minIndex] = $tmp;
+        ArrayTools::swap($arr, $lastSorted, $minIndex);
     }
 }
 

@@ -15,10 +15,7 @@ do {
     for ($l = 0, $r = 1; $r < count($arr) - $offset; $l++, $r++) {
         if ($arr[$l] > $arr[$r]) {
             $sorted = false;
-
-            $tmp = $arr[$l];
-            $arr[$l] = $arr[$r];
-            $arr[$r] = $tmp;
+            ArrayTools::swap($arr, $l, $r);
         }
     }
 

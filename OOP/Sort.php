@@ -3,12 +3,14 @@ declare(strict_types=1);
 
 namespace Adorosh\Algorithms\OOP;
 
+use Adorosh\Algorithms\Utils\ArrayTools;
+
 class Sort
 {
     /**
      * @see https://upload.wikimedia.org/wikipedia/commons/c/c8/Bubble-sort-example-300px.gif
      */
-    public static function bubble(array $arr): array
+    public static function bubbleSort(array $arr): array
     {
         $offset = 0;
 
@@ -18,7 +20,7 @@ class Sort
             for ($l = 0, $r = 1; $r < count($arr) - $offset; $l++, $r++) {
                 if ($arr[$l] > $arr[$r]) {
                     $sorted = false;
-                    self::swap($arr, $l, $r);
+                    ArrayTools::swap($arr, $l, $r);
                 }
             }
 
@@ -31,7 +33,7 @@ class Sort
     /**
      * @see https://upload.wikimedia.org/wikipedia/commons/9/94/Selection-Sort-Animation.gif
      */
-    public static function selection(array $arr): array
+    public static function selectionSort(array $arr): array
     {
         for ($lastSorted = 0; $lastSorted < count($arr) - 1; $lastSorted++) {
             $minIndex = $lastSorted;
@@ -43,7 +45,7 @@ class Sort
             }
 
             if ($arr[$lastSorted] > $arr[$minIndex]) {
-                self::swap($arr, $lastSorted, $minIndex);
+                ArrayTools::swap($arr, $lastSorted, $minIndex);
             }
         }
 
@@ -53,7 +55,7 @@ class Sort
     /**
      * @see https://upload.wikimedia.org/wikipedia/commons/0/0f/Insertion-sort-example-300px.gif
      */
-    public static function insertion(array $arr): array
+    public static function insertionSort(array $arr): array
     {
         for ($i = 1; $i < count($arr); $i++) {
             $current = $arr[$i];
@@ -73,7 +75,7 @@ class Sort
     /**
      * @see https://upload.wikimedia.org/wikipedia/commons/e/ef/Sorting_shaker_sort_anim.gif
      */
-    public static function shaker(array $arr): array
+    public static function shakerSort(array $arr): array
     {
         $offsetL = $offsetR = 0;
 
@@ -87,7 +89,7 @@ class Sort
             ) {
                 if ($arr[$l] > $arr[$r]) {
                     $sorted = false;
-                    self::swap($arr, $l, $r);
+                    ArrayTools::swap($arr, $l, $r);
                 }
             }
             $offsetR++;
@@ -99,7 +101,7 @@ class Sort
             ) {
                 if ($arr[$r] > $arr[$l]) {
                     $sorted = false;
-                    self::swap($arr, $l, $r);
+                    ArrayTools::swap($arr, $l, $r);
                 }
             }
             $offsetL++;
@@ -108,11 +110,43 @@ class Sort
         return $arr;
     }
 
-    private static function swap(array &$arr, int $l, int $r): void
+    /**
+     * @see https://upload.wikimedia.org/wikipedia/commons/9/9c/Quicksort-example.gif
+     */
+    public static function quickSort(array $arr): array
     {
-        $tmp = $arr[$l];
-        $arr[$l] = $arr[$r];
-        $arr[$r] = $tmp;
+        self::quickSortHoare($arr, 0, count($arr) - 1);
+
+        return $arr;
+    }
+
+    /**
+     * @see https://en.wikipedia.org/wiki/Quicksort#Hoare_partition_scheme
+     */
+    public static function quickSortHoare(array &$arr, int $start = 0, int $end = -1)
+    {
+        if ($start >= $end) {
+            return;
+        }
+
+        $l = $start;
+        $r = $end;
+
+        $pivot = $arr[floor(($l + $r) / 2)];
+
+        while ($l <= $r) {
+            while ($arr[$l] < $pivot) $l++;
+            while ($arr[$r] > $pivot) $r--;
+
+            if ($l <= $r) {
+                ArrayTools::swap($arr, $l, $r);
+                $l++;
+                $r--;
+            }
+        }
+
+        self::quickSortHoare($arr, $start, $l - 1);
+        self::quickSortHoare($arr, $l, $end);
     }
 
     //Jokes
@@ -120,28 +154,52 @@ class Sort
     /**
      * @see https://i.redd.it/x9triplll1v11.jpg
      */
-    public static function stalin(array $arr): array
+    public static function stalinSortArray(array $arr): array
     {
-        $findPrev = function (array $arr, int $i) use (&$findPrev): int
-        {
-            return $arr[$i] ?? $findPrev($arr, $i - 1);
-        };
+        $lastSorted = 0;
 
-        $lastId = count($arr) - 1;
+        for ($current = 1; $current < count($arr); $current++) {
+            if ($arr[$current] < $arr[$lastSorted]) {
+                $arr[$current] = null;
+            } else {
+                if ($current > ($lastSorted + 1)) {
+                    $arr[$lastSorted + 1] = $arr[$current];
+                }
 
-        for ($i = 1; $i < $lastId; $i++) {
-            if ($arr[$i] < $findPrev($arr, $i - 1)) {
-                unset($arr[$i]);
+                $lastSorted++;
             }
         }
 
-        return array_values($arr);
+        return array_slice($arr, 0, $lastSorted + 1);
+    }
+
+    public static function stalinSortList(\SplDoublyLinkedList $list): \SplDoublyLinkedList
+    {
+        $list->rewind();
+        $prev = $list->current();
+        $list->next();
+
+        while ($list->valid()) {
+            if ($list->current() < $prev) {
+                $toDelete = $list->key();
+                $list->prev();
+                $list->offsetUnset($toDelete);
+            } else {
+                $prev = $list->current();
+            }
+
+            $list->next();
+        }
+
+        $list->rewind();
+
+        return $list;
     }
 
     /**
      * @see https://i.redd.it/4x8k96l6snq21.png
      */
-    public static function waitingForMiracle(array $arr): array
+    public static function waitingForMiracleSort(array $arr): array
     {
         echo 'WARNING! This algorithm may never stop!' . PHP_EOL;
 
