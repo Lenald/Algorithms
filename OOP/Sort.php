@@ -7,9 +7,6 @@ use Adorosh\Algorithms\Utils\ArrayTools;
 
 class Sort
 {
-    /**
-     * @see https://upload.wikimedia.org/wikipedia/commons/c/c8/Bubble-sort-example-300px.gif
-     */
     public static function bubbleSort(array $arr): array
     {
         $offset = 0;
@@ -30,9 +27,6 @@ class Sort
         return $arr;
     }
 
-    /**
-     * @see https://upload.wikimedia.org/wikipedia/commons/9/94/Selection-Sort-Animation.gif
-     */
     public static function selectionSort(array $arr): array
     {
         for ($lastSorted = 0; $lastSorted < count($arr) - 1; $lastSorted++) {
@@ -52,9 +46,6 @@ class Sort
         return $arr;
     }
 
-    /**
-     * @see https://upload.wikimedia.org/wikipedia/commons/0/0f/Insertion-sort-example-300px.gif
-     */
     public static function insertionSort(array $arr): array
     {
         for ($i = 1; $i < count($arr); $i++) {
@@ -72,9 +63,6 @@ class Sort
         return $arr;
     }
 
-    /**
-     * @see https://upload.wikimedia.org/wikipedia/commons/e/ef/Sorting_shaker_sort_anim.gif
-     */
     public static function shakerSort(array $arr): array
     {
         $offsetL = $offsetR = 0;
@@ -110,20 +98,24 @@ class Sort
         return $arr;
     }
 
-    /**
-     * @see https://upload.wikimedia.org/wikipedia/commons/9/9c/Quicksort-example.gif
-     */
-    public static function quickSort(array $arr): array
+    public static function quickSort(array $arr, string $algorithm = 'Hoare'): array
     {
-        self::quickSortHoare($arr, 0, count($arr) - 1);
+        switch ($algorithm) {
+            case 'Lomuto':
+                $method = 'quickSortLomuto';
+                break;
+
+            case 'Hoare':
+            default:
+                $method = 'quickSortHoare';
+        }
+
+        self::$method($arr, 0, count($arr) - 1);
 
         return $arr;
     }
 
-    /**
-     * @see https://en.wikipedia.org/wiki/Quicksort#Hoare_partition_scheme
-     */
-    public static function quickSortHoare(array &$arr, int $start = 0, int $end = -1)
+    public static function quickSortHoare(array &$arr, int $start = 0, int $end = -1): void
     {
         if ($start >= $end) {
             return;
@@ -147,6 +139,68 @@ class Sort
 
         self::quickSortHoare($arr, $start, $l - 1);
         self::quickSortHoare($arr, $l, $end);
+    }
+
+    public static function quickSortLomuto(array &$arr, int $start, int $end): void
+    {
+        if ($start >= $end) {
+            return;
+        }
+
+        $l = $start;
+        $r = $end;
+
+        for ($current = $l; $current < $r; $current++) {
+            if ($arr[$current] <= $arr[$r]) {
+                ArrayTools::swap($arr, $l, $current);
+                $l++;
+            }
+        }
+
+        ArrayTools::swap($arr, $l, $r);
+
+        self::quickSortLomuto($arr, $start, $l - 1);
+        self::quickSortLomuto($arr, $l + 1, $end);
+    }
+
+    public static function mergeSort(array &$arr, int $start = 0, int $end = -1) {
+        if ($end === -1) {
+            $end = count($arr) - 1;
+        }
+
+        if ($start >= $end) {
+            return;
+        }
+
+        $splitPoint = (int)(($start + $end) / 2);
+
+        self::mergeSort($arr, $start, $splitPoint);
+        self::mergeSort($arr, $splitPoint + 1, $end);
+
+        $buffer = [];
+
+        $l = $start;
+        $r = $splitPoint + 1;
+
+        while ($l <= $splitPoint && $r <= $end) {
+            if ($arr[$l] < $arr[$r]) {
+                $buffer[] = $arr[$l++];
+            } else {
+                $buffer[] = $arr[$r++];
+            }
+        }
+
+        while ($l <= $splitPoint) {
+            $buffer[] = $arr[$l++];
+        }
+
+        while ($r <= $end) {
+            $buffer[] = $arr[$r++];
+        }
+
+        for ($i = 0; $i < count($buffer); $i++) {
+            $arr[$start + $i] = $buffer[$i];
+        }
     }
 
     //Jokes
