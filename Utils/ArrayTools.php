@@ -16,9 +16,9 @@ class ArrayTools
         return $result;
     }
 
-    public static function print(array $values, string $separator = ', ', bool $graph = false): void
+    public static function print(array $values, string $separator = ', ', bool $diagram = false): void
     {
-        if (!$graph) {
+        if (!$diagram) {
             echo implode($separator, $values) . PHP_EOL;
         } else {
             foreach ($values as $item) {
