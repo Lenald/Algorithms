@@ -16,9 +16,15 @@ class ArrayTools
         return $result;
     }
 
-    public static function print(array $values, string $separator = ', '): void
+    public static function print(array $values, string $separator = ', ', bool $graph = false): void
     {
-        echo implode($separator, $values) . PHP_EOL;
+        if (!$graph) {
+            echo implode($separator, $values) . PHP_EOL;
+        } else {
+            foreach ($values as $item) {
+                echo str_repeat('#', $item) . $separator;
+            }
+        }
     }
 
     public static function swap(array &$arr, int $l, int $r): void

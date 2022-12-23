@@ -5,6 +5,52 @@ namespace Adorosh\Algorithms\OOP;
 
 use Adorosh\Algorithms\Utils\ArrayTools;
 
+/**
+ * Bubble Sorts:
+ *     Simple
+ *     Shaker Sort
+ *     Comb Sort
+ *     Odd-Even Sort
+ *
+ * Selection Sort
+ *
+ * Insertion Sorts:
+ *     Simple
+ *     TODO: Shell Sort
+ *
+ * Merge Sorts:
+ *     Simple
+ *     TODO: Multithreading Sort
+ *
+ * Quick Sorts:
+ *     Hoare Quick Sort
+ *     Lomuto Quick Sort
+ *
+ * TODO: Tree sorts:
+ *     Tree Sort
+ *     Heap Sort
+ *     Smooth Sort
+ *     Tournament Sort
+ *     Han Sort
+ *
+ * TODO: Stack Sorts:
+ *     Patience Sort
+ *
+ * TODO: Unclassified Sorts:
+ *     Pocket Sort
+ *     Radix Sort
+ *     Counting Sort
+ *
+ * Other Order Changing Algorithms
+ *     Reverse
+ *     Shuffle
+ *
+ * Jokes:
+ *     Stalin Sort: (@link https://mastodon.social/@mathew/100958177234287431)
+ *         For arrays
+ *         For lists
+ *     Waiting For Miracle Sort (@link https://www.thecshandbook.com/Miracle_Sort)
+ */
 class Sort
 {
     public static function bubbleSort(array $arr): array
@@ -22,6 +68,88 @@ class Sort
             }
 
             $offset++;
+        } while (!$sorted);
+
+        return $arr;
+    }
+
+    public static function shakerSort(array $arr): array
+    {
+        $offsetL = $offsetR = 0;
+
+        do {
+            $sorted = true;
+
+            for (
+                $l = 0 + $offsetL, $r = 1 + $offsetL;
+                $r < count($arr) - $offsetR;
+                $l++, $r++
+            ) {
+                if ($arr[$l] > $arr[$r]) {
+                    $sorted = false;
+                    ArrayTools::swap($arr, $l, $r);
+                }
+            }
+            $offsetR++;
+
+            for (
+                $l = count($arr) - $offsetR - 2, $r = count($arr) - $offsetR - 1;
+                $l > $offsetL;
+                $l--, $r--
+            ) {
+                if ($arr[$r] < $arr[$l]) {
+                    $sorted = false;
+                    ArrayTools::swap($arr, $l, $r);
+                }
+            }
+            $offsetL++;
+        } while (!$sorted);
+
+        return $arr;
+    }
+
+    public static function combSort(array $arr): array
+    {
+        $factor = 1.247;
+        $offset = 0;
+
+        do {
+            $sorted = true;
+
+            $l = 0;
+            $r = (int)((count($arr) - 1) / ($offset ?: 1));
+            $r = ($r - $l < 1) ? $l + 1 : $r;
+
+            for (; $r < count($arr); $l++, $r++) {
+                if ($arr[$l] > $arr[$r]) {
+                    $sorted = false;
+                    ArrayTools::swap($arr, $l, $r);
+                }
+            }
+
+            if ($r - $l > 1) {
+                $offset += $factor;
+            }
+        } while (!$sorted || $r - $l > 1);
+
+        return $arr;
+    }
+
+    public static function oddEvenSort(array $arr): array
+    {
+        $start = 0;
+
+        do {
+            $sorted = true;
+
+            for ($l = $start, $r = $start + 1; $l < count($arr) && $r < count($arr); $l += 2, $r += 2) {
+                if ($arr[$l] > $arr[$r]) {
+                    $sorted = false;
+                    ArrayTools::swap($arr, $l, $r);
+                }
+            }
+
+            $start = $start ? 0 : 1;
         } while (!$sorted);
 
         return $arr;
@@ -63,40 +191,49 @@ class Sort
         return $arr;
     }
 
-    public static function shakerSort(array $arr): array
-    {
-        $offsetL = $offsetR = 0;
+    //public static function shellSort(array $arr) {}
 
-        do {
-            $sorted = true;
+    public static function mergeSort(array &$arr, int $start = 0, int $end = -1) {
+        if ($end === -1) {
+            $end = count($arr) - 1;
+        }
 
-            for (
-                $l = 0 + $offsetL, $r = 1 + $offsetL;
-                $r < count($arr) - $offsetR;
-                $l++, $r++
-            ) {
-                if ($arr[$l] > $arr[$r]) {
-                    $sorted = false;
-                    ArrayTools::swap($arr, $l, $r);
-                }
+        if ($start >= $end) {
+            return;
+        }
+
+        $splitPoint = (int)(($start + $end) / 2);
+
+        self::mergeSort($arr, $start, $splitPoint);
+        self::mergeSort($arr, $splitPoint + 1, $end);
+
+        $buffer = [];
+
+        $l = $start;
+        $r = $splitPoint + 1;
+
+        while ($l <= $splitPoint && $r <= $end) {
+            if ($arr[$l] < $arr[$r]) {
+                $buffer[] = $arr[$l++];
+            } else {
+                $buffer[] = $arr[$r++];
             }
-            $offsetR++;
+        }
 
-            for (
-                $l = count($arr) - $offsetR - 2, $r = count($arr) - $offsetR - 1;
-                $l > $offsetL;
-                $l--, $r--
-            ) {
-                if ($arr[$r] < $arr[$l]) {
-                    $sorted = false;
-                    ArrayTools::swap($arr, $l, $r);
-                }
-            }
-            $offsetL++;
-        } while (!$sorted);
+        while ($l <= $splitPoint) {
+            $buffer[] = $arr[$l++];
+        }
 
-        return $arr;
+        while ($r <= $end) {
+            $buffer[] = $arr[$r++];
+        }
+
+        for ($i = 0; $i < count($buffer); $i++) {
+            $arr[$start + $i] = $buffer[$i];
+        }
     }
+
+    //public static function multithreadingSort(array $arr) {}
 
     public static function quickSort(array $arr, string $algorithm = 'Hoare'): array
     {
@@ -163,51 +300,44 @@ class Sort
         self::quickSortLomuto($arr, $l + 1, $end);
     }
 
-    public static function mergeSort(array &$arr, int $start = 0, int $end = -1) {
-        if ($end === -1) {
-            $end = count($arr) - 1;
+//    public static function treeSort (array $arr) {}
+
+//    public static function heapSort (array $arr) {}
+
+//    public static function smoothSort (array $arr) {}
+
+//    public static function tournamentSort (array $arr) {}
+
+//    public static function hanSort (array $arr) {}
+
+//    public static function patienceSort (array $arr) {}
+
+//    public static function pocketSort (array $arr) {}
+
+//    public static function radixSort (array $arr) {}
+
+//    public static function countingSort (array $arr) {}
+
+    public static function reverse(array $arr): array
+    {
+        for ($l = 0, $r = count($arr) - 1; $l < $r; $l++, $r--) {
+            ArrayTools::swap($arr, $l, $r);
         }
 
-        if ($start >= $end) {
-            return;
-        }
-
-        $splitPoint = (int)(($start + $end) / 2);
-
-        self::mergeSort($arr, $start, $splitPoint);
-        self::mergeSort($arr, $splitPoint + 1, $end);
-
-        $buffer = [];
-
-        $l = $start;
-        $r = $splitPoint + 1;
-
-        while ($l <= $splitPoint && $r <= $end) {
-            if ($arr[$l] < $arr[$r]) {
-                $buffer[] = $arr[$l++];
-            } else {
-                $buffer[] = $arr[$r++];
-            }
-        }
-
-        while ($l <= $splitPoint) {
-            $buffer[] = $arr[$l++];
-        }
-
-        while ($r <= $end) {
-            $buffer[] = $arr[$r++];
-        }
-
-        for ($i = 0; $i < count($buffer); $i++) {
-            $arr[$start + $i] = $buffer[$i];
-        }
+        return $arr;
     }
 
-    //Jokes
+    public static function shuffle(array $arr): array
+    {
+        $last = count($arr) - 1;
 
-    /**
-     * @see https://i.redd.it/x9triplll1v11.jpg
-     */
+        for ($i = 0; $i <= $last; $i++) {
+            ArrayTools::swap($arr, $i, random_int(0, $last));
+        }
+
+        return $arr;
+    }
+
     public static function stalinSortArray(array $arr): array
     {
         $lastSorted = 0;
@@ -250,9 +380,6 @@ class Sort
         return $list;
     }
 
-    /**
-     * @see https://i.redd.it/4x8k96l6snq21.png
-     */
     public static function waitingForMiracleSort(array $arr): array
     {
         echo 'WARNING! This algorithm may never stop!' . PHP_EOL;
