@@ -1,4 +1,7 @@
 {
+  "require": {
+    "ext-readline": "*"
+  },
   "autoload": {
     "psr-4": {
       "Adorosh\\Algorithms\\": ""
