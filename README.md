@@ -35,12 +35,10 @@
   - [x] For lists
 - [x] [Waiting For Miracle Sort](https://www.thecshandbook.com/Miracle_Sort)
 
-## Algorithms
-- Greedy algorithms:
-  - [x] Change machine
-
 ## Other:
 - [x] Fibonacci
+- [x] Change machine (greedy algorithm example)
+- [x] Towers of Hanoi
 
 ## Path finding:
 - [ ] A* search algorithm
